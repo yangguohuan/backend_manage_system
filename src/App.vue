@@ -1,5 +1,7 @@
 <template>
-  <div></div>
+  <div>
+    <el-button type="success" round>Success</el-button>
+  </div>
 </template>
 
 <script setup lang="ts"></script>
