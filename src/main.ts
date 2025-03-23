@@ -6,10 +6,14 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 import App from './App.vue'
 import router from './router'
+import globalComponent from '@/components/index'
+
 import 'virtual:svg-icons-register'
+import '@/style/index.scss'
 
 const app = createApp(App)
 
+app.use(globalComponent)
 app.use(ElementPlus)
 app.use(createPinia())
 app.use(router)

@@ -1,11 +1,14 @@
 <template>
   <div>
-    <svgIcon name="home"></svgIcon>
+    <p class="test">测试</p>
+    <svgIcon name="phone"></svgIcon>
   </div>
 </template>
 
-<script setup lang="ts">
-import svgIcon from './components/svg-icon.vue'
-</script>
+<script setup lang="ts"></script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.test {
+  color: $color;
+}
+</style>
