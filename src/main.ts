@@ -9,7 +9,7 @@ import router from './router'
 import globalComponent from '@/components/index'
 
 import 'virtual:svg-icons-register'
-import '@/style/index.scss'
+import './style/index.scss'
 
 const app = createApp(App)
 
