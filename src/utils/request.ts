@@ -1,10 +1,8 @@
 import axios from 'axios'
-import { error } from 'echarts/types/src/util/log.js'
 import { ElMessage } from 'element-plus'
-import { ca } from 'element-plus/es/locales.mjs'
 
 const request = axios.create({
-  baseURL: 'localhost:8000/',
+  baseURL: 'http://127.0.0.1:8000/',
   timeout: 5000,
 })
 
@@ -18,23 +16,28 @@ request.interceptors.response.use(
   },
   (error) => {
     let message = ''
-    const status = error.response.status
-    switch (status) {
-      case 401:
-        message = 'TOKEN过期'
-        break
-      case 403:
-        message = '无权访问'
-        break
-      case 404:
-        message = '请求地址错误'
-        break
-      case 500:
-        message = '服务器错误'
-        break
-      default:
-        message = '网络错误'
-        break
+
+    if (error.response && error.response.status) {
+      const status = error.response.status
+      switch (status) {
+        case 401:
+          message = 'TOKEN过期'
+          break
+        case 403:
+          message = '无权访问'
+          break
+        case 404:
+          message = '请求地址错误'
+          break
+        case 500:
+          message = '服务器错误'
+          break
+        default:
+          message = '网络错误'
+          break
+      }
+    } else {
+      message = '网络错误或服务器未响应'
     }
 
     ElMessage({
