@@ -18,7 +18,7 @@
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button class="login-btn" type="primary" size="default" round>登录</el-button>
+            <el-button class="login-btn" type="primary" size="default" plain>登录</el-button>
           </el-form-item>
         </el-form>
       </el-col>
