@@ -18,6 +18,7 @@ export const constantRoute = [
     path: '/index',
     component: () => import('@/views/indexPage.vue'),
     name: 'index',
+    alias: '/',
   },
   {
     path: '/:pathMatch(.*)*',
