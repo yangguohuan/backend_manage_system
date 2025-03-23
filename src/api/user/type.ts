@@ -9,3 +9,7 @@ export interface user {
   user_type: number
   signature: string
 }
+
+export interface token {
+  token: string
+}

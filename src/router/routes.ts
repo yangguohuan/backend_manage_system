@@ -3,6 +3,7 @@ export const constantRoute = [
     path: '/login',
     component: () => import('@/views/loginPage.vue'),
     name: 'login',
+    alias: '/',
   },
   {
     path: '/home',
@@ -18,7 +19,6 @@ export const constantRoute = [
     path: '/index',
     component: () => import('@/views/indexPage.vue'),
     name: 'index',
-    alias: '/',
   },
   {
     path: '/:pathMatch(.*)*',
