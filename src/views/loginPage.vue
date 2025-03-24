@@ -3,13 +3,13 @@
     <el-row>
       <el-col :span="12" :xs="0"></el-col>
       <el-col :span="12" :xs="24">
-        <el-form class="login-form">
+        <el-form class="login-form" :rules="rules" :model="user" ref="formValidate">
           <h1>Hello</h1>
           <h2>欢迎来到神奇的后台管理站</h2>
-          <el-form-item>
+          <el-form-item prop="username">
             <el-input :prefix-icon="User" v-model="user.username"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item prop="password">
             <el-input
               type="password"
               :prefix-icon="Lock"
@@ -44,10 +44,12 @@ let user = reactive({
   username: 'admin',
   password: 'yang123456',
 })
+let formValidate = ref()
 let userStore = useUserStore()
 let loading = ref(false)
 const router = useRouter()
-const login = () => {
+const login = async () => {
+  await formValidate.value.validate()
   loading.value = true
   userStore
     .userLogin(user.username, user.password)
@@ -58,11 +60,19 @@ const login = () => {
       loading.value = false
       if (localStorage.getItem('LOGIN') === '1') {
         router.push({
-          path: '/home',
+          path: '/base',
         })
       }
     })
 }
+
+const rules = reactive({
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 8, max: 20, message: '密码长度在8位字符到20位字符之间', trigger: 'change' },
+  ],
+})
 </script>
 
 <style lang="scss" scoped>
