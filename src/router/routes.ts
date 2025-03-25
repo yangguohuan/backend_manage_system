@@ -7,12 +7,6 @@ export const constantRoute = [
     title: '登录',
   },
   {
-    path: '/index',
-    component: () => import('@/views/indexPage.vue'),
-    name: 'index',
-    title: '首页',
-  },
-  {
     path: '/base',
     component: () => import('@/layout/layoutBasic.vue'),
     name: 'base',
@@ -23,6 +17,12 @@ export const constantRoute = [
         component: () => import('@/views/homePage.vue'),
         name: 'home',
         title: '首页',
+      },
+      {
+        path: '/index',
+        component: () => import('@/views/indexPage.vue'),
+        name: 'index',
+        title: '测试',
       },
     ],
   },
