@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <RouterView></RouterView>
-  </div>
+  <RouterView />
 </template>
 
 <script setup lang="ts">
