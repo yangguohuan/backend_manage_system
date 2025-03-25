@@ -4,3 +4,4 @@
  通用后台管理系统前端设计
 ![image](github_media/login.png)
 ![image](github_media/content.png)
+![image](github_media/dispersed.png)
