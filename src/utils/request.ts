@@ -7,6 +7,10 @@ const request = axios.create({
 })
 
 request.interceptors.request.use((config) => {
+  if (localStorage.getItem('LOGIN') === '1') {
+    const token = localStorage.getItem('TOKEN')
+    config.headers.token = token
+  }
   return config
 })
 

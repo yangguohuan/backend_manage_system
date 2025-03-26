@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 enum API {
   LOGIN_URL = 'api_login',
-  USERINFO_URL = 'user/info',
+  USERINFO_URL = 'api_user',
 }
 
 export const reqLogin = async (username: string, password: string) => {
@@ -11,5 +11,6 @@ export const reqLogin = async (username: string, password: string) => {
 }
 
 export const reqUserInfo = async () => {
-  await request.get(API.USERINFO_URL)
+  const user = await request.get(API.USERINFO_URL)
+  return user
 }

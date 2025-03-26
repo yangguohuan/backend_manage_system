@@ -22,7 +22,7 @@
     </div>
     <div class="tabbar-right">
       <el-button :icon="RefreshRight" @click="updateContent" circle></el-button>
-      <el-button :icon="FullScreen" circle></el-button>
+      <el-button :icon="FullScreen" @click="fullScreen" circle></el-button>
       <el-button :icon="Setting" circle></el-button>
       <img
         src="../../assets/logo.png"
@@ -56,6 +56,19 @@ const changIcon = () => {
 const route = useRoute()
 const updateContent = () => {
   LayoutSetting.refresh = !LayoutSetting.refresh
+}
+
+const fullScreen = () => {
+  // 判断是否全屏，如果全屏则返回真，否则返回假
+  let full = document.fullscreenElement
+
+  if (!full) {
+    // 使用文档根节点requestFullscreen变为全屏模式
+    document.documentElement.requestFullscreen()
+  } else {
+    // 退出全屏模式
+    document.exitFullscreen()
+  }
 }
 </script>
 
