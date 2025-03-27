@@ -11,6 +11,7 @@
   
 `cd ..`  
 `mkdir backend`  
+`cd backend`  
 `git clone https://github.com/yangguohuan/volunteer`  
 `cd env/script/`  
 `activate`  
