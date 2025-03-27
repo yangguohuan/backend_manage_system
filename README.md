@@ -3,9 +3,20 @@
 # 数据由项目 volunteer 提供
 `mkdir project`  
 `cd project`  
+`mkdir frontend`  
+`cd frontend`
 `git clone https://github.com/yangguohuan/backend_manage_system`  
 `pnpm install`  
-`npm run dev`    
+`npm run dev`     
+  
+`cd ..`  
+`mkdir backend`  
+`git clone https://github.com/yangguohuan/volunteer`  
+`cd env/script/`  
+`activate`  
+`cd ../../`  
+`python manage.py runserver`  
+  
  通用后台管理系统前端设计  
  采用前后端分离设计，目前还在制作中  
 ![image](github_media/login.png)
