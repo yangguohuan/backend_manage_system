@@ -4,7 +4,7 @@
 `mkdir project`  
 `cd project`  
 `mkdir frontend`  
-`cd frontend`
+`cd frontend`  
 `git clone https://github.com/yangguohuan/backend_manage_system`  
 `pnpm install`  
 `npm run dev`     
