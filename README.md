@@ -1,6 +1,6 @@
 # backend_manage_system（this is frontend project）
-# 前端项目，一个后台管理系统，vue3开发
-# 数据由项目 volunteer 提供
+## 前端项目，一个后台管理系统，vue3开发
+### 数据由项目 volunteer 提供
 `mkdir project`  
 `cd project`  
 `mkdir frontend`  
