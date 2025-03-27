@@ -38,7 +38,7 @@
 import { User, Lock } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import useUserStore from '@/stores/modules/user'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 let user = reactive({
   username: 'admin',
@@ -48,6 +48,8 @@ let formValidate = ref()
 let userStore = useUserStore()
 let loading = ref(false)
 const router = useRouter()
+const route = useRoute()
+const redirect = route.query.redirect as string
 const login = async () => {
   await formValidate.value.validate()
   loading.value = true
@@ -60,7 +62,7 @@ const login = async () => {
       loading.value = false
       if (localStorage.getItem('LOGIN') === '1') {
         router.push({
-          path: '/base',
+          path: redirect || '/home',
         })
       }
     })
@@ -70,7 +72,7 @@ const rules = reactive({
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 8, max: 20, message: '密码长度在8位字符到20位字符之间', trigger: 'change' },
+    { min: 3, max: 20, message: '密码长度在8位字符到20位字符之间', trigger: 'change' },
   ],
 })
 </script>

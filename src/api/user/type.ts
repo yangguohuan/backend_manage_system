@@ -8,7 +8,7 @@ export interface user {
   email: string
   user_type: number
   signature: string
-  date_added: string
+  data_added: string
 }
 
 export interface token {
