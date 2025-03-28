@@ -8,14 +8,18 @@
       <el-table :data="data" stripe style="width: 100%; margin: 10px 0" border>
         <el-table-column label="序号" width="80px" align="center" type="index"></el-table-column>
         <el-table-column prop="mark_name" label="品牌名称" align="center"></el-table-column>
-        <el-table-column prop="address" label="品牌LOGO" align="center"></el-table-column>
+        <el-table-column prop="mark_image" label="品牌LOGO" align="center">
+          <template #default="{ row }">
+            <img :src="url + row.mark_image" alt="logo" style="width: 60px" />
+          </template>
+        </el-table-column>
         <el-table-column prop="address" label="品牌操作" align="center"></el-table-column>
       </el-table>
       <!--分页器-->
       <el-pagination
         v-model:current-page="pageNo"
         v-model:page-size="pageSize"
-        :page-sizes="[3, 5, 7, 9]"
+        :page-sizes="[5, 10]"
         :background="true"
         layout="prev, pager, next, ->, jumper, total, sizes"
         :total="total"
@@ -41,13 +45,15 @@ interface list {
 let pageNo = ref<number>(1)
 
 // 每一页展示多少条数据
-let pageSize = ref<number>(3)
+let pageSize = ref<number>(10)
 
 // 展示总数
 let total = ref<number>(0)
 
 // 存储商标的对象组
 let data = ref<[]>([])
+
+const url = 'http://127.0.0.1:8000/static'
 
 // 实例化数据仓库方法
 const trademarkList = trademarkListStore()
