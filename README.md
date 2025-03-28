@@ -21,5 +21,5 @@
  通用后台管理系统前端设计  
  采用前后端分离设计，目前还在制作中  
 ![image](github_media/login.png)
-![image](github_media/content.png)
+![image](github_media/ll.png)
 ![image](github_media/dispersed.png)
