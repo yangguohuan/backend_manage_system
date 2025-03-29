@@ -25,6 +25,6 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  console.log(to, from)
   nprogress.done()
+  return { to, from }
 })
