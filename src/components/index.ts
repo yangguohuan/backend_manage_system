@@ -1,7 +1,8 @@
 import type { App, Component } from 'vue'
 import svgIcon from './svgIcon/svgIcon.vue'
+import category from './category/indexComponents.vue'
 
-const globalComponents: Record<string, Component> = { svgIcon }
+const globalComponents: Record<string, Component> = { svgIcon, category }
 
 export default {
   install(app: App): void {

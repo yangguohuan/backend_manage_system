@@ -23,7 +23,16 @@
               @click="updateTrademark(row.mark_name, row.mark_image, row.id)"
               circle
             />
-            <el-button type="danger" :icon="Delete" @click="deleteTrademark(row.id)" circle />
+
+            <!--气泡确认框-->
+            <el-popconfirm
+              :title="`你确定要删除${row.mark_name}商标吗?`"
+              @confirm="deleteTrademark(row.id)"
+            >
+              <template #reference>
+                <el-button type="danger" :icon="Delete" circle />
+              </template>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -43,9 +52,9 @@
     </el-card>
 
     <!--对话框-->
-    <el-dialog v-model="dialogFormVisible" title="添加品牌" width="500">
-      <el-form>
-        <el-form-item label="品牌标题" label-width="100px">
+    <el-dialog v-model="dialogFormVisible" :title="frameTitle" width="500">
+      <el-form :rules="rules">
+        <el-form-item label="品牌标题" label-width="100px" prop="mark_name">
           <el-input
             autocomplete="off"
             placeholder="请输入品牌标题"
@@ -54,7 +63,7 @@
           />
           <input type="text" name="image_url" :value="imageUrl" hidden="hidden" />
         </el-form-item>
-        <el-form-item label="品牌LOGO" label-width="100px">
+        <el-form-item label="品牌LOGO" label-width="100px" prop="mark_image">
           <el-upload
             class="avatar-uploader"
             :action="uploadImageURL"
@@ -84,10 +93,9 @@ import type { trademarkListType } from '@/api/products/type'
 import type { UploadProps } from 'element-plus'
 import type { uploadResponseMessageType } from '@/api/products/type'
 import { onMounted, ref } from 'vue'
-import { Edit, Delete } from '@element-plus/icons-vue'
+import { Edit, Delete, Plus } from '@element-plus/icons-vue'
 import trademarkListStore from '@/stores/modules/trademarkList'
 import { ElMessage } from 'element-plus'
-import { Plus } from '@element-plus/icons-vue'
 import { reqAddTrademark, reqUpdateTrademark, reqDeleteTrademark } from '@/api/products'
 
 // 图片上传的URL
@@ -121,16 +129,19 @@ let mark_name = ref('')
 let mark_image = ref('')
 let imageUrl = ref('')
 let mark_id = ref(0)
+let frameTitle = ref('')
 
 // 异步访问后端数据，操作之后接收后端回传的消息
 let uploadResponseMessage = ref<uploadResponseMessageType>({ message: '' })
 
 const addTrademark = () => {
+  frameTitle.value = '添加商标'
   dialogFormVisible.value = true
 }
 
 // 修改商标信息之前，更新数值
 const updateTrademark = async (name: string, image: string, id: number) => {
+  frameTitle.value = '修改商标内容'
   dialogFormVisible.value = true
   mark_name.value = name
   imageUrl.value = url + image
@@ -217,6 +228,11 @@ const deleteTrademark = async (id: number) => {
   )) as unknown as uploadResponseMessageType
   showTrademarkList()
   ElMessage.success(uploadResponseMessage.value.message)
+}
+
+const rules = {
+  mark_name: [],
+  mark_image: [],
 }
 </script>
 
