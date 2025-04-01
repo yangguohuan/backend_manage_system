@@ -207,7 +207,6 @@ const confirm = async () => {
   }
   showTrademarkList()
   ElMessage.success(uploadResponseMessage.value.message)
-  console.log(uploadResponseMessage.value)
   dialogFormVisible.value = false
   mark_image.value = ''
   mark_name.value = ''
