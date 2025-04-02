@@ -77,6 +77,7 @@ const onCategoryPrimaryChanged = async (a_id: number) => {
   )) as unknown as categoryType[]
   secondaryId.value = ''
   thirdId.value = ''
+  categoryThird.value.length = 0
 }
 
 // 当二级分类选项改变时触发

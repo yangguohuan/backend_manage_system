@@ -21,7 +21,6 @@ router.beforeEach((to, from, next) => {
       next({ path: '/login', query: { redirect: to.path } })
     }
   }
-  next()
 })
 
 router.afterEach((to, from) => {

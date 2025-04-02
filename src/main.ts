@@ -15,7 +15,6 @@ import './style/index.scss'
 const app = createApp(App)
 
 app.use(globalComponent)
-app.use(ElementPlus)
 app.use(pinia)
 app.use(router)
 

@@ -42,10 +42,10 @@
         v-model:page-size="pageSize"
         :page-sizes="[5, 10]"
         :background="true"
-        layout="prev, pager, next, ->, jumper, total, sizes"
+        layout="prev, pager, next, jumper, ->, total, sizes"
         :total="total"
         size="large"
-        hide-on-single-page="true"
+        hide-on-single-page
         @size-change="changSize"
         @current-change="showTrademarkList"
       />
@@ -61,7 +61,7 @@
             v-model="mark_name"
             name="mark_name"
           />
-          <input type="text" name="image_url" :value="imageUrl" hidden="hidden" />
+          <input type="text" name="image_url" :value="imageUrl" hidden />
         </el-form-item>
         <el-form-item label="品牌LOGO" label-width="100px" prop="mark_image">
           <el-upload

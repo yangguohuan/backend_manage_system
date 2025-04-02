@@ -6,13 +6,13 @@
       <div v-show="isTable">
         <el-button
           type="primary"
-          style="margin-left: 20px"
-          :disabled="thirdCategoryId"
+          :icon="Plus"
+          :disabled="isExistThirdCategoryId"
           @click="showAddArea"
         >
           添加属性
         </el-button>
-        <el-table border :data="attrArray" style="margin: 20px">
+        <el-table border :data="attrArray" style="margin-top: 20px">
           <el-table-column type="index" align="center" label="序号" width="120" />
           <el-table-column prop="name" type="default" align="center" label="属性名称" width="180" />
           <el-table-column type="default" align="center" label="属性值">
@@ -122,7 +122,7 @@ let id = ref<number>(0)
 let attrId = ref<number>(0)
 
 // 用于判单三级分类值是否存在，默认存在，不存在则为false
-let thirdCategoryId = ref<boolean>(true)
+let isExistThirdCategoryId = ref<boolean>(true)
 
 // 组件内容切换，默认展示表格
 let isTable = ref<boolean>(true)
@@ -133,10 +133,10 @@ let inputAttrValueArray = ref<HTMLInputElement[]>([])
 const getThirdCategoryId = (a_id: number) => {
   if (a_id != -1) {
     id.value = a_id
-    thirdCategoryId.value = false
+    isExistThirdCategoryId.value = false
     getAttr(a_id)
   } else {
-    thirdCategoryId.value = true
+    isExistThirdCategoryId.value = true
   }
 }
 
