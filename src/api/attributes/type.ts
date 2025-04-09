@@ -2,33 +2,24 @@ export interface categoryType {
   id: number
   name: string
   upperId?: number
-  dateAdded: string
 }
-
-export interface reqCategoryType {
-  message: string
-  data: categoryType[]
-}
-
 export interface attrType {
   id: number
   name: string
-  upperId?: number
-  dateAdded: string
-  attribute_values: object[]
+  category: number
+  attribute_values?: Array<attributeValueType>
+  valAndAttr?: string
 }
 
 export interface attributeValueType {
+  id?: number
   name: string
+  attribute?: number
   readOnly?: boolean
 }
 
-export interface reqAttrType {
-  message: string
-  data: attrType[]
-}
-
-export interface addResponseMessageType {
-  message: string
-  status: string
+export interface TRADEMRAK {
+  id: number
+  mark_name: string
+  mark_image: string
 }

@@ -2,8 +2,13 @@
 import router from './router'
 import nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
+import { useCategoryStore } from './stores/modules/Category'
+
 nprogress.configure({ showSpinner: false })
 router.beforeEach((to, from, next) => {
+  const categoryStore = useCategoryStore()
+  categoryStore.divSelector = 0
+  categoryStore.thirdCategoryId = 0
   document.title = '即刻-' + to.meta.title
   nprogress.start()
   const token = localStorage.getItem('TOKEN')

@@ -7,6 +7,10 @@ export interface trademarkListType {
   data: []
 }
 
-export interface uploadResponseMessageType {
-  message: string
+export interface trademarkType {
+  id: number
+  mark_name: string
+  mark_image: string
+  image_url: string
+  date_added: string
 }

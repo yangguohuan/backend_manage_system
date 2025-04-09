@@ -9,9 +9,12 @@ import {
   reqAddAttribute,
   reqUpdateAttributeValue,
   reqDeleteAttribute,
+  reqGetAllAttr,
 } from '@/api/attributes/index'
 
-const useCategoryStore = defineStore('Category', () => {
+export const useCategoryStore = defineStore('Category', () => {
+  const thirdCategoryId = 0
+  const divSelector = 0
   const getCategoryPrimary = async () => {
     const data = await reqGetCategoryPrimary()
     return data.data
@@ -48,11 +51,17 @@ const useCategoryStore = defineStore('Category', () => {
     const data = await reqUpdateAttributeValue(a_id, name, attrValueArray)
     return data
   }
+  const getAllAttr = async (c_id: number) => {
+    const data = await reqGetAllAttr(c_id)
+    return data
+  }
   const deleteAttribute = async (a_id: number) => {
     const result = await reqDeleteAttribute(a_id)
     return result
   }
   return {
+    divSelector,
+    thirdCategoryId,
     getCategoryPrimary,
     getCategorySecondary,
     getCategoryThird,
@@ -61,7 +70,6 @@ const useCategoryStore = defineStore('Category', () => {
     updateAttributeValue,
     getAttributeValue,
     deleteAttribute,
+    getAllAttr,
   }
 })
-
-export default useCategoryStore

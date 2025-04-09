@@ -1,13 +1,13 @@
 <template>
   <div>
-    <category @getThirdCategoryId="getThirdCategoryId" :isTable="isTable"></category>
+    <category></category>
 
     <el-card style="max-width: 100%; margin-top: 20px">
-      <div v-show="isTable">
+      <div v-show="categoryStore.divSelector == 0" style="width: 750px">
         <el-button
           type="primary"
           :icon="Plus"
-          :disabled="isExistThirdCategoryId"
+          :disabled="categoryStore.thirdCategoryId == 0"
           @click="showAddArea"
         >
           添加属性
@@ -44,9 +44,8 @@
           </el-table-column>
         </el-table>
       </div>
-      <!--    -->
       <!--添加属性-->
-      <div v-show="!isTable" style="margin: 0 10px">
+      <div v-show="categoryStore.divSelector == 1" style="margin: 0 10px; width: 750px">
         <el-form :inline="true">
           <el-form-item :label="attributeAreaTitle">
             <el-input placeholder="请输入属性名称" v-model="attributeName"></el-input>
@@ -91,9 +90,10 @@
 
 <script setup lang="ts">
 import { Edit, Delete, Plus, CloseBold, EditPen, Close } from '@element-plus/icons-vue'
-import { ref, nextTick } from 'vue'
-import type { addResponseMessageType, attrType, attributeValueType } from '@/api/attributes/type'
-import useCategoryStore from '@/stores/modules/Category'
+import { ref, nextTick, watch } from 'vue'
+import type { attrType, attributeValueType } from '@/api/attributes/type'
+import type { messageType } from '@/api/index'
+import { useCategoryStore } from '@/stores/modules/Category'
 import { ElMessage } from 'element-plus'
 
 // 接收仓库数据
@@ -115,51 +115,33 @@ let attrValueArray = ref<attributeValueType[]>([])
 // 属性名称
 let attributeName = ref<string>('')
 
-// 接收子组件传递的三级分类id值
-let id = ref<number>(0)
-
 // 接收属性id
 let attrId = ref<number>(0)
-
-// 用于判单三级分类值是否存在，默认存在，不存在则为false
-let isExistThirdCategoryId = ref<boolean>(true)
-
-// 组件内容切换，默认展示表格
-let isTable = ref<boolean>(true)
 
 // 一个数组，属性值的实例化对象
 let inputAttrValueArray = ref<HTMLInputElement[]>([])
 
-const getThirdCategoryId = (a_id: number) => {
-  if (a_id != -1) {
-    id.value = a_id
-    isExistThirdCategoryId.value = false
-    getAttr(a_id)
-  } else {
-    isExistThirdCategoryId.value = true
-  }
-}
-
 // 显示添加属性 或 修改属性区域
 const showAddArea = () => {
-  isTable.value = false
   attributeAreaTitle.value = '添加属性'
   attrValueArray.value.length = 0
   attributeName.value = ''
+  categoryStore.divSelector = 1
 }
 
 const updateAttribute = async (id: number, name: string) => {
   attrId.value = id
   attributeName.value = name
-  isTable.value = false
+  categoryStore.divSelector = 1
   attributeAreaTitle.value = '修改属性'
   const data = (await categoryStore.getAttributeValue(id)) as unknown as attrType[]
-  attributeName.value = data[0].name
+  attributeName.value = data[0].name as string
+
   attrValueArray.value = data[0].attribute_values as unknown as attributeValueType[]
 }
 
 const cancel = () => {
-  isTable.value = true
+  categoryStore.divSelector = 0
 }
 
 // 点击确认后添加属性值函数
@@ -175,24 +157,24 @@ const addAttribute = () => {
 
 // 上传要添加的属性和属性值至服务器
 const save = async () => {
-  const result = ref<addResponseMessageType>({ status: '', message: '' })
+  const result = ref<messageType>({ status: 0, message: '' })
   if (attributeAreaTitle.value !== '修改属性') {
     result.value = (await categoryStore.addAttribute(
-      id.value,
+      categoryStore.thirdCategoryId,
       attributeName.value,
       attrValueArray.value,
-    )) as unknown as addResponseMessageType
+    )) as unknown as messageType
   } else {
     result.value = (await categoryStore.updateAttributeValue(
       attrId.value,
       attributeName.value,
       attrValueArray.value,
-    )) as unknown as addResponseMessageType
+    )) as unknown as messageType
   }
   ElMessage.success(result.value.message)
-  if (result.value.status == '200') {
-    isTable.value = true
-    getAttr(id.value)
+  if (result.value.status == 200) {
+    categoryStore.divSelector = 0
+    getAttr(categoryStore.thirdCategoryId)
   }
 }
 
@@ -214,10 +196,18 @@ const toEdit = (row: attributeValueType, $index: number) => {
 
 // 定义删除函数
 const reqDeleteAttribute = async (a_id: number) => {
-  const result = (await categoryStore.deleteAttribute(a_id)) as unknown as addResponseMessageType
+  const result = (await categoryStore.deleteAttribute(a_id)) as unknown as messageType
   ElMessage.success(result.message)
-  getAttr(id.value)
+  getAttr(categoryStore.thirdCategoryId)
 }
+
+// 监听pinia中三级分类id变化之后执行一次属性查询
+watch(
+  () => categoryStore.thirdCategoryId,
+  () => {
+    getAttr(categoryStore.thirdCategoryId)
+  },
+)
 </script>
 
 <style scoped></style>

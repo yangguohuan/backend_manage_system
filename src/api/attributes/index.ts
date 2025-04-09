@@ -10,6 +10,12 @@ enum API {
   GET_CATEGORY_PRIMARY_URL = '/activity_manage/api_query_category_primary',
   ADD_ATTRIBUTE_URL = '/activity_manage/api_add_attribute',
   DELETE_ATTRIBUTE_URL = '/activity_manage/api_delete_attribute',
+  GET_ALL_ATTR_URL = '/activity_manage/api_get_all_attribute',
+}
+
+export const reqGetAllAttr = async (c_id: number) => {
+  const data = await request.get(API.GET_ALL_ATTR_URL + `/${c_id}`)
+  return data
 }
 
 export const reqGetAttributeValue = async (a_id: number) => {

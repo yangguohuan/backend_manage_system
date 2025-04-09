@@ -1,6 +1,11 @@
 <template>
   <el-card style="margin: 20px 0">
-    <el-button type="primary" :icon="Plus" @click="showAddSpuDiv(-1)" :disabled="isExistCategoryId">
+    <el-button
+      type="primary"
+      :icon="Plus"
+      @click="showAddSpuDiv(0)"
+      :disabled="categoryStore.thirdCategoryId == 0"
+    >
       添加SPU
     </el-button>
     <el-table style="margin-top: 20px" :data="spuList" border>
@@ -18,7 +23,7 @@
           <el-button
             type="primary"
             :icon="CirclePlus"
-            @click="showAddSkuDiv"
+            @click="showAddSkuDiv(row.id)"
             title="添加SKU"
             circle
           />
@@ -29,123 +34,145 @@
             title="查看修改SPU详情"
             circle
           />
-          <el-button type="warning" :icon="List" title="查看关联的所有SKU" circle />
-          <el-button type="danger" :icon="Delete" title="删除" circle />
+          <el-button
+            type="warning"
+            :icon="List"
+            title="查看关联的所有SKU"
+            @click="showSkus(row.id)"
+            circle
+          />
+
+          <el-popconfirm :title="`你确定要删除${row.title}吗？`" @confirm="deleteSpu(row.id)">
+            <template #reference>
+              <el-button type="danger" :icon="Delete" title="删除" circle />
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
-      :page-sizes="pageSizeSelect"
+      v-model:current-page="peginationStore.pageNo"
+      v-model:page-size="peginationStore.pageSize"
+      :page-sizes="peginationStore.pageSizes"
       layout="prev, pager, next, jumper, ->, total, sizes"
-      :total="total"
+      :total="peginationStore.total"
       style="margin-top: 20px"
       background
       @size-change="sizeChange"
       @current-change="currentChange"
     />
+
+    <skuList></skuList>
   </el-card>
 </template>
 
 <script setup lang="ts" name="spuList">
 import { ref, watch } from 'vue'
-import { Plus } from '@element-plus/icons-vue'
-import type { spuType, responseSpuType } from '@/api/spu/type'
+import { Plus, CirclePlus, View, List, Delete } from '@element-plus/icons-vue'
+import type { SPU } from '@/api/spu/type'
+import type { SKU } from '@/api/sku/type'
+import type { peginationType } from '@/api/pegination/type'
 import { useSpuStore } from '@/stores/modules/Spu'
-import { CirclePlus, View, List, Delete } from '@element-plus/icons-vue'
-
-// 接收子组件传递的三级分类id值
-let categoryId = ref<number>(0)
-
-// 获取父组件传值，用于判断是否存在三级分类id
-let isExistCategoryId = ref<boolean>(true)
+import { useSkuStore } from '@/stores/modules/Sku'
+import { useCategoryStore } from '@/stores/modules/Category'
+import { usePeginationStore } from '@/stores/modules/Pegination'
+import { ElMessage } from 'element-plus'
+import type { messageType } from '@/api/index'
+import skuList from '@/components/skuList/indexComponent.vue'
 
 // 从pinia仓库获取数据
 const spuStore = useSpuStore()
-
-// 用于判断父组件div选择
-let divSelector = ref<number>(0)
-
-// 分页器属性
-// 当前页面
-const currentPage = ref<number>(1)
-
-// 一个页面包含的数量
-const pageSize = ref<number>(5)
-
-// 一个页面包含数组数量的选择器
-const pageSizeSelect = ref<number[]>([5, 10])
-
-// 包含spu总数
-const total = ref<number>(0)
+const categoryStore = useCategoryStore()
+const peginationStore = usePeginationStore()
+const skuStore = useSkuStore()
 
 // 所有spu的数据，一个数组包含对象
-const spuList = ref<spuType[]>([])
+const spuList = ref<SPU[]>([])
 
-// 用于判断分类组件是否被禁用
-const isTable = ref<boolean>(false)
-
-// spu的详情信息
-const spuInfo = ref<spuType>()
 // 通过数据仓库全局方法获取spu数据
 const getSpuList = async (cid: number, cPage: number, pSize: number) => {
-  const data = (await spuStore.getSpuList(cid, cPage, pSize)) as unknown as responseSpuType
-  currentPage.value = data.currentPage as number
-  pageSize.value = data.pageSize as number
-  total.value = data.totalCount as number
-  spuList.value = data.data as spuType[]
+  const data = (await spuStore.getSpuList(cid, cPage, pSize)) as unknown as peginationType
+  peginationStore.pageNo = data.currentPage as number
+  peginationStore.pageSize = data.pageSize as number
+  peginationStore.total = data.totalCount as number
+  spuList.value = data.data as SPU[]
 }
-
-// 获取父组件的传值，如果存在则执行查询操作
-const props = defineProps(['thirdCategoryId', 'isExistThirdCategoryId'])
 
 // 监听 props 的变化
 watch(
-  () => [props.thirdCategoryId, props.isExistThirdCategoryId],
-  ([newThirdCategoryId, newIsExistThirdCategoryId]) => {
-    if (!newIsExistThirdCategoryId) {
-      categoryId.value = newThirdCategoryId
-      isExistCategoryId.value = newIsExistThirdCategoryId
-      getSpuList(categoryId.value, currentPage.value, pageSize.value)
+  () => [categoryStore.thirdCategoryId, categoryStore.divSelector],
+  () => {
+    if (categoryStore.thirdCategoryId != 0) {
+      // 当三级分类为0 的时候不查询数据
+      getSpuList(categoryStore.thirdCategoryId, peginationStore.pageNo, peginationStore.pageSize)
     }
   },
-  { immediate: true }, // 初始化时立即执行一次
 )
-
-// 获取父组件传来的函数
-const emitter = defineEmits(['changeDivSelector'])
 
 // 当单页面大小改变时，查询数据
 const sizeChange = () => {
-  getSpuList(categoryId.value, currentPage.value, pageSize.value)
+  if (categoryStore.thirdCategoryId != 0) {
+    // 当三级分类为0 的时候不查询数据
+    getSpuList(categoryStore.thirdCategoryId, peginationStore.pageNo, peginationStore.pageSize)
+  }
 }
 
 // 当页码改变时，查询数据
 const currentChange = () => {
-  getSpuList(categoryId.value, currentPage.value, pageSize.value)
+  if (categoryStore.thirdCategoryId != 0) {
+    // 当三级分类为0 的时候不查询数据
+    getSpuList(categoryStore.thirdCategoryId, peginationStore.pageNo, peginationStore.pageSize)
+  }
 }
 
-// 查询某个spu的详情信息
-const getSpuInfo = async (sId: number) => {
-  const data = (await spuStore.getSpuInfo(sId)) as unknown as responseSpuType
-  spuInfo.value = data.data as spuType
-  console.log(spuInfo.value)
+// 删除spu
+const deleteSpu = async (sId: number) => {
+  const data = (await spuStore.deleteSpu(sId)) as unknown as messageType
+  ElMessage.success(data.message)
+  if (categoryStore.thirdCategoryId != 0) {
+    getSpuList(categoryStore.thirdCategoryId, peginationStore.pageNo, peginationStore.pageSize)
+  }
 }
 
 // 显示添加spu的div
-const showAddSpuDiv = (s_id: number) => {
-  if (s_id != -1) {
-    getSpuInfo(s_id)
+const showAddSpuDiv = async (sId: number) => {
+  clearData()
+  categoryStore.divSelector = 1
+  spuStore.spuInfo.third_category_id = categoryStore.thirdCategoryId
+  if (sId != 0) {
+    spuStore.spuInfo.id = sId
+    const data = await spuStore.getSpuInfo(spuStore.spuInfo.id)
+    // @ts-expect-error：here no error
+    spuStore.spuInfo = data.data as unknown as SPU
   }
-  divSelector.value = 2
-  emitter('changeDivSelector', divSelector.value, isTable.value)
+}
+// 显示添加sku的div
+const showAddSkuDiv = (sId: number) => {
+  clearData()
+  categoryStore.divSelector = 2
+  skuStore.sku.spu = sId
 }
 
-// 显示添加sku的div
-const showAddSkuDiv = () => {
-  divSelector.value = 3
-  emitter('changeDivSelector', divSelector.value, isTable.value)
+// 展示所有该spu下所有sku
+const showSkus = async (spu_id: number) => {
+  const data = await spuStore.getSkus(spu_id)
+  skuStore.skus = data.data.data as unknown as SKU[]
+  spuStore.spuInfo.id = spu_id
+  spuStore.isShow = true
+}
+
+// 清空数据
+const clearData = () => {
+  spuStore.spuInfo.title = ''
+  spuStore.spuInfo.trademark = ''
+  spuStore.spuInfo.content = ''
+  spuStore.spuInfo.images.length = 0
+  spuStore.spuInfo.attributes.length = 0
+  spuStore.attributeInfo = null
+  skuStore.sku.name = ''
+  skuStore.sku.price = '' as unknown as number
+  skuStore.sku.weight = '' as unknown as number
+  skuStore.sku.describe = ''
 }
 </script>
 

@@ -7,12 +7,16 @@
       </el-button>
 
       <!--内容-->
-      <el-table :data="data" stripe style="width: 100%; margin: 10px 0" border>
+      <el-table :data="data" stripe style="width: 750px; margin: 10px 0" border>
         <el-table-column label="序号" width="80px" align="center" type="index"></el-table-column>
         <el-table-column prop="mark_name" label="品牌名称" align="center"></el-table-column>
         <el-table-column prop="mark_image" label="品牌LOGO" align="center">
           <template #default="{ row }">
-            <img :src="url + row.mark_image" alt="logo" style="width: 60px" />
+            <img
+              :src="trademarkListStore.urlPrefix + row.mark_image"
+              alt="logo"
+              style="width: 60px"
+            />
           </template>
         </el-table-column>
         <el-table-column label="品牌操作" align="center" width="200px">
@@ -61,12 +65,12 @@
             v-model="mark_name"
             name="mark_name"
           />
-          <input type="text" name="image_url" :value="imageUrl" hidden />
+          <input type="text" name="image_url" :value="mark_image" hidden />
         </el-form-item>
         <el-form-item label="品牌LOGO" label-width="100px" prop="mark_image">
           <el-upload
             class="avatar-uploader"
-            :action="uploadImageURL"
+            :action="trademarkListStore.uploadImageURL"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
@@ -91,18 +95,15 @@
 <script setup lang="ts">
 import type { trademarkListType } from '@/api/products/type'
 import type { UploadProps } from 'element-plus'
-import type { uploadResponseMessageType } from '@/api/products/type'
+import type { messageType } from '@/api/index'
 import { onMounted, ref } from 'vue'
 import { Edit, Delete, Plus } from '@element-plus/icons-vue'
-import trademarkListStore from '@/stores/modules/trademarkList'
 import { ElMessage } from 'element-plus'
 import { reqAddTrademark, reqUpdateTrademark, reqDeleteTrademark } from '@/api/products'
+import useTrademarkListStore from '@/stores/modules/trademarkList'
 
-// 图片上传的URL
-const uploadImageURL = 'http://127.0.0.1:8000/activity_manage/api_upload'
-
-// 图片地址前缀
-const url = 'http://127.0.0.1:8000/static'
+// 获取仓库数据
+const trademarkListStore = useTrademarkListStore()
 
 // 在组件加载时调用方法
 onMounted(() => {
@@ -132,7 +133,7 @@ let mark_id = ref(0)
 let frameTitle = ref('')
 
 // 异步访问后端数据，操作之后接收后端回传的消息
-let uploadResponseMessage = ref<uploadResponseMessageType>({ message: '' })
+let uploadResponseMessage = ref<messageType>()
 
 const addTrademark = () => {
   frameTitle.value = '添加商标'
@@ -144,16 +145,13 @@ const updateTrademark = async (name: string, image: string, id: number) => {
   frameTitle.value = '修改商标内容'
   dialogFormVisible.value = true
   mark_name.value = name
-  imageUrl.value = url + image
+  imageUrl.value = trademarkListStore.urlPrefix + image
   mark_id.value = id
 }
 
-// 实例化数据仓库方法
-const trademarkList = trademarkListStore()
-
 const showTrademarkList = async () => {
   // 异步获取值
-  const list = (await trademarkList.getTrademarkList(
+  const list = (await trademarkListStore.getTrademarkList(
     pageNo.value,
     pageSize.value,
   )) as unknown as trademarkListType
@@ -197,14 +195,15 @@ const confirm = async () => {
     uploadResponseMessage.value = (await reqAddTrademark(
       mark_name.value,
       mark_image.value,
-    )) as unknown as uploadResponseMessageType
+    )) as unknown as messageType
   } else {
     uploadResponseMessage.value = (await reqUpdateTrademark(
       mark_id.value,
       mark_name.value,
       mark_image.value,
-    )) as unknown as uploadResponseMessageType
+    )) as unknown as messageType
   }
+  console.log(mark_image.value)
   showTrademarkList()
   ElMessage.success(uploadResponseMessage.value.message)
   dialogFormVisible.value = false
@@ -222,9 +221,7 @@ const cancel = () => {
 }
 
 const deleteTrademark = async (id: number) => {
-  uploadResponseMessage.value = (await reqDeleteTrademark(
-    id,
-  )) as unknown as uploadResponseMessageType
+  uploadResponseMessage.value = (await reqDeleteTrademark(id)) as unknown as messageType
   showTrademarkList()
   ElMessage.success(uploadResponseMessage.value.message)
 }
