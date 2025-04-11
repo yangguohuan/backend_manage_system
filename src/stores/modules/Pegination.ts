@@ -10,6 +10,7 @@ export const usePeginationStore = defineStore('peginationStore', () => {
     pageSize: 5,
     pageSizes: [5, 10],
     total: 1,
+    keyword: '',
   }
   return { pageNo, pageSize, pageSizes, total, pegination }
 })

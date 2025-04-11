@@ -4,11 +4,22 @@ export interface loginForm {
 }
 
 export interface user {
-  username: string
-  email: string
-  user_type: number
-  signature: string
-  data_added: string
+  id?: number
+  username?: string
+  nickname?: string
+  password?: string
+  role?: string
+  roles?: Array<role>
+  date_added?: string
+  date_updated?: string
+}
+
+export interface role {
+  id: number
+  userId: number
+  rolename: string
+  date_added: string
+  date_updated: string
 }
 
 export interface token {

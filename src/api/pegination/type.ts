@@ -1,5 +1,3 @@
-import type { SPU } from '../spu/type'
-
 // 定义一个前端获取对象的类型
 export interface peginationType {
   // 返回查询结果提示，成功或者失败
@@ -20,6 +18,12 @@ export interface peginationType {
   // 返回页面包含数据数量
   pageSize?: number
 
+  // 当前页码
+  pageNo?: number
+
+  // 关键字
+  keyword?: string
+
   // 返回数据内容
-  data?: SPU[] | SPU
+  data?: object[] | object
 }

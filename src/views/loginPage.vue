@@ -5,7 +5,7 @@
       <el-col :span="12" :xs="24">
         <el-form class="login-form" :rules="rules" :model="user" ref="formValidate">
           <h1>Hello</h1>
-          <h2>欢迎来到神奇的后台管理站</h2>
+          <h2>欢迎来到即刻后台管理站</h2>
           <el-form-item prop="username">
             <el-input :prefix-icon="User" v-model="user.username"></el-input>
           </el-form-item>

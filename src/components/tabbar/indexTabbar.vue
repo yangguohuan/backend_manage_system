@@ -51,13 +51,17 @@ import { ArrowRight, RefreshRight, FullScreen, Setting } from '@element-plus/ico
 import { useRoute, useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
 import useLayoutSettingStore from '@/stores/modules/setting'
-import useUserInfoStore from '@/stores/modules/userInfo'
-interface message {
-  message: string
-}
-const userInfoStore = useUserInfoStore()
+import useUserStore from '@/stores/modules/user'
+import type { user } from '@/api/user/type'
+import type { messageType } from '@/api'
+
+// 定义用户名
+const username = ref<string>()
+
+// 实例化仓库数据
 let LayoutSetting = useLayoutSettingStore()
-let username = ref('')
+const userStore = useUserStore()
+
 const changIcon = () => {
   LayoutSetting.fold = !LayoutSetting.fold
 }
@@ -79,17 +83,31 @@ const fullScreen = () => {
     document.exitFullscreen()
   }
 }
-onMounted(async () => {
-  await userInfoStore.user()
+
+// 获取用户信息
+const getUser = async () => {
+  userStore.userInfo = (await userStore.getUser(
+    JSON.parse(localStorage.getItem('TOKEN') as string) as number,
+  )) as unknown as user
+  localStorage.setItem('username', JSON.stringify(userStore.userInfo.username))
+  username.value = JSON.parse(localStorage.getItem('username') as string)
+}
+
+// 每当挂载组件时，就获取一次用户信息
+onMounted(() => {
   if (localStorage.getItem('TOKEN')) {
-    username.value = localStorage.getItem('username') as string
+    getUser()
   }
 })
+
 const logout = async () => {
-  const msg = (await userInfoStore.logout()) as unknown as message
+  const data = (await userStore.userLogout()) as unknown as messageType
+  localStorage.removeItem('TOKEN')
+  localStorage.removeItem('LOGIN')
+  localStorage.removeItem('username')
   ElNotification({
     type: 'success',
-    message: msg.message,
+    message: data.message,
   })
   router.replace({
     path: '/login',
