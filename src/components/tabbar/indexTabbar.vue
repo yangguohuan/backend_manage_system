@@ -52,8 +52,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
 import useLayoutSettingStore from '@/stores/modules/setting'
 import useUserStore from '@/stores/modules/user'
+import useRouteStore from '@/stores/modules/route'
 import type { user } from '@/api/user/type'
 import type { messageType } from '@/api'
+import { asyncRoute } from '@/router/routes'
+import type { ROUTE } from '@/api/user/type'
+// @ts-expect-error: no error
+import cloneDeep from 'lodash'
 
 // 定义用户名
 const username = ref<string>()
@@ -61,6 +66,7 @@ const username = ref<string>()
 // 实例化仓库数据
 let LayoutSetting = useLayoutSettingStore()
 const userStore = useUserStore()
+const routeStore = useRouteStore()
 
 const changIcon = () => {
   LayoutSetting.fold = !LayoutSetting.fold
@@ -84,13 +90,48 @@ const fullScreen = () => {
   }
 }
 
+function filterRoutesKeepStructure(routes: ROUTE[], names: string[]) {
+  const result: ROUTE[] = []
+
+  for (const route of routes) {
+    // 深拷贝当前 route
+    const newRoute = { ...route }
+
+    if (route.children) {
+      // 递归处理 children
+      const filteredChildren = filterRoutesKeepStructure(route.children, names)
+      if (filteredChildren.length > 0) {
+        newRoute.children = filteredChildren
+        result.push(newRoute)
+        continue
+      }
+    }
+
+    // 如果当前 route 的 name 在目标列表中，保留
+    if (names.includes(route.name as string)) {
+      result.push(newRoute)
+    }
+  }
+
+  return result
+}
+
 // 获取用户信息
 const getUser = async () => {
+  // const data = await userStore.getUser(JSON.parse(localStorage.getItem('TOKEN') as string))
   userStore.userInfo = (await userStore.getUser(
     JSON.parse(localStorage.getItem('TOKEN') as string) as number,
   )) as unknown as user
-  localStorage.setItem('username', JSON.stringify(userStore.userInfo.username))
-  username.value = JSON.parse(localStorage.getItem('username') as string)
+  username.value = userStore.userInfo.username
+  // 筛选函数
+  // 保留结构的递归筛选函数
+  routeStore.menuRoutes.push(
+    // @ts-expect-error: no error
+    ...filterRoutesKeepStructure(
+      cloneDeep(asyncRoute as unknown as ROUTE[]),
+      userStore.userInfo.acls as string[],
+    ),
+  )
 }
 
 // 每当挂载组件时，就获取一次用户信息

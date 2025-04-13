@@ -1,3 +1,4 @@
+// 常量路由
 export const constantRoute = [
   {
     path: '/base',
@@ -30,6 +31,51 @@ export const constantRoute = [
       icon: 'DataAnalysis',
     },
   },
+  {
+    path: '/login',
+    component: () => import('@/views/loginPage.vue'),
+    name: 'login',
+    meta: {
+      title: '登录',
+      hidden: true,
+      icon: 'House',
+    },
+
+    alias: '/',
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/404',
+    name: 'Any',
+    meta: {
+      title: '错误页面',
+      hidden: true,
+      icon: 'Failed',
+    },
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/404Page.vue'),
+    name: '404',
+    meta: {
+      title: '404',
+      hidden: true,
+      icon: 'Failed',
+    },
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/404',
+    name: 'Any',
+    meta: {
+      title: '错误页面',
+      hidden: true,
+      icon: 'Failed',
+    },
+  },
+]
+
+export const asyncRoute = [
   {
     path: '/acl',
     component: () => import('@/layout/layoutBasic.vue'),
@@ -125,37 +171,5 @@ export const constantRoute = [
         },
       },
     ],
-  },
-  {
-    path: '/login',
-    component: () => import('@/views/loginPage.vue'),
-    name: 'login',
-    meta: {
-      title: '登录',
-      hidden: true,
-      icon: 'House',
-    },
-
-    alias: '/',
-  },
-  {
-    path: '/404',
-    component: () => import('@/views/404Page.vue'),
-    name: '404',
-    meta: {
-      title: '404',
-      hidden: true,
-      icon: 'Failed',
-    },
-  },
-  {
-    path: '/:pathMatch(.*)*',
-    redirect: '/404',
-    name: 'Any',
-    meta: {
-      title: '错误页面',
-      hidden: true,
-      icon: 'Failed',
-    },
   },
 ]

@@ -36,9 +36,13 @@
 
 <script setup lang="ts">
 import { User, Lock } from '@element-plus/icons-vue'
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import useUserStore from '@/stores/modules/user'
 import { useRouter, useRoute } from 'vue-router'
+import useRouteStore from '@/stores/modules/route'
+import { constantRoute } from '@/router/routes'
+
+const routeStore = useRouteStore()
 
 let user = reactive({
   username: 'admin',
@@ -74,6 +78,10 @@ const rules = reactive({
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 3, max: 20, message: '密码长度在8位字符到20位字符之间', trigger: 'change' },
   ],
+})
+
+onMounted(() => {
+  routeStore.menuRoutes = constantRoute
 })
 </script>
 

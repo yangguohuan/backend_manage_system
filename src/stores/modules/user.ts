@@ -17,7 +17,7 @@ import {
 } from '@/api/user'
 import { ElNotification } from 'element-plus'
 import getTime from '@/utils/time'
-import type { user } from '@/api/user/type'
+import type { user, ROUTE } from '@/api/user/type'
 import type { peginationType } from '@/api/pegination/type'
 import type { role } from '@/api/user/type'
 
@@ -27,6 +27,7 @@ interface result {
 }
 
 const useUserStore = defineStore('user', () => {
+  const routes = <ROUTE[]>[]
   const userInfo = <user>{}
   const userList = <user[]>[]
   const roleInfo = <role>{}
@@ -107,6 +108,7 @@ const useUserStore = defineStore('user', () => {
     return data
   }
   return {
+    routes,
     roleInfo,
     userInfo,
     userList,

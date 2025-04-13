@@ -338,6 +338,9 @@ const getNewUserList = () => {
 }
 
 onMounted(() => {
+  // 初始化页码
+  peginationStore.pegination.pageNo = 1
+  peginationStore.pegination.pageSize = 5
   getUserList()
   getRoleList()
 })

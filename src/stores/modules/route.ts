@@ -3,7 +3,8 @@ import { constantRoute } from '@/router/routes'
 
 const useRouteStore = defineStore('route', () => {
   const menuRoutes = constantRoute
-  return { menuRoutes }
+  const refreshRoute = constantRoute
+  return { menuRoutes, refreshRoute }
 })
 
 export default useRouteStore

@@ -10,6 +10,7 @@ export interface user {
   password?: string
   role?: string
   roles?: Array<role>
+  acls?: Array<string>
   date_added?: string
   date_updated?: string
 }
@@ -24,4 +25,13 @@ export interface role {
 
 export interface token {
   token: string
+}
+
+export interface ROUTE {
+  path?: string
+  component?: string
+  name?: string
+  meta?: object
+  redirect?: string
+  children?: Array<ROUTE>
 }

@@ -2,19 +2,6 @@
   <div></div>
 </template>
 
-<script setup lang="ts">
-import { useAclStore } from '@/stores/modules/acl'
-import { onMounted } from 'vue'
-const aclStore = useAclStore()
-
-const getAcls = async () => {
-  const data = await aclStore.getPermission()
-  console.log(data)
-}
-
-onMounted(() => {
-  getAcls()
-})
-</script>
+<script setup lang="ts"></script>
 
 <style scoped></style>
